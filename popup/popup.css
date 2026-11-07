@@ -4,7 +4,9 @@
 @media (prefers-color-scheme: dark) {
   :root { --bg: #1b1b1b; --fg: #eee; --muted: #999; --line: #333; --accent: #ff6b6b; --chip: #2a2a2a; }
 }
+:root { color-scheme: light dark; scrollbar-color: var(--line) var(--bg); scrollbar-width: thin; }
 * { box-sizing: border-box; }
+* { scrollbar-color: var(--line) transparent; scrollbar-width: thin; }
 body {
   width: 320px; margin: 0; padding: 12px 14px;
   background: var(--bg); color: var(--fg);

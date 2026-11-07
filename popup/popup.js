@@ -30,6 +30,7 @@ async function render() {
   $("enabled").checked = cfg.enabled;
   $("mode").value = cfg.mode;
   $("autoBlockLabeled").checked = cfg.autoBlockLabeled;
+  $("autoBlockTts").checked = cfg.autoBlockTts;
   $("showBlockButton").checked = cfg.showBlockButton;
   $("shortsAutoSkip").checked = cfg.shortsAutoSkip;
   $("hideAllShorts").checked = cfg.hideAllShorts;
@@ -51,7 +52,7 @@ async function render() {
   $("count").textContent = filteredCount.toLocaleString();
 }
 
-for (const id of ["enabled", "autoBlockLabeled", "showBlockButton", "shortsAutoSkip", "hideAllShorts"]) {
+for (const id of ["enabled", "autoBlockLabeled", "autoBlockTts", "showBlockButton", "shortsAutoSkip", "hideAllShorts"]) {
   $(id).addEventListener("change", (e) => chrome.storage.local.set({ [id]: e.target.checked }));
 }
 $("mode").addEventListener("change", (e) => chrome.storage.local.set({ mode: e.target.value }));

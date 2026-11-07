@@ -275,7 +275,10 @@
     if (!owner || !below) return;
 
     const labelHit = YTAF_LABEL_PATTERNS.some((re) => re.test(below.innerText || ""));
-    if (!labelHit) return;
+    // 설명란은 접혀 있어도 DOM에 전체 텍스트가 있으므로 textContent로 읽음
+    const desc = document.querySelector("ytd-watch-metadata #description")?.textContent || "";
+    const ttsHit = !labelHit && YTAF_TTS_PATTERNS.some((re) => re.test(desc));
+    if (!labelHit && !ttsHit) return;
     if (lastWatchId === vid && document.querySelector(".ytaf-banner")) return;
     lastWatchId = vid;
 
@@ -284,21 +287,22 @@
     const name = (owner.querySelector("#channel-name")?.innerText || a?.textContent || "").trim();
     if (!key) return;
 
-    if (cfg.autoBlockLabeled && !cfg.allowedChannels[key] && !cfg.blockedChannels[key]) {
+    const auto = labelHit ? cfg.autoBlockLabeled : cfg.autoBlockTts;
+    if (auto && !cfg.allowedChannels[key] && !cfg.blockedChannels[key]) {
       blockChannel(key, name);
     }
-    showBanner(below, key, name);
+    showBanner(below, key, name, labelHit ? "AI 생성 콘텐츠 라벨" : "AI 음성(TTS) 표기", auto);
   }
 
-  function showBanner(host, key, name) {
+  function showBanner(host, key, name, what, auto) {
     document.querySelector(".ytaf-banner")?.remove();
     const div = document.createElement("div");
     div.className = "ytaf-banner";
     const msg = document.createElement("span");
-    const blocked = cfg.autoBlockLabeled || cfg.blockedChannels[key];
+    const blocked = auto || cfg.blockedChannels[key];
     msg.textContent = blocked
-      ? `⚠️ AI 생성 콘텐츠 라벨 감지 — '${name}' 채널을 차단 목록에 추가했습니다.`
-      : `⚠️ 유튜브가 이 영상을 AI 생성/합성 콘텐츠로 표시했습니다.`;
+      ? `⚠️ ${what} 감지 — '${name}' 채널을 차단 목록에 추가했습니다.`
+      : `⚠️ ${what} 감지`;
     div.append(msg);
 
     const btn = document.createElement("button");
