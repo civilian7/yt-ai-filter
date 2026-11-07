@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <h1>YT AI Filter</h1>
+    <label class="switch"><input type="checkbox" id="enabled" /><span></span></label>
+  </header>
+
+  <section class="stat">걸러낸 영상 <b id="count">0</b>개</section>
+
+  <section>
+    <div class="row">
+      <span>처리 방식</span>
+      <select id="mode">
+        <option value="hide">숨기기</option>
+        <option value="blur">흐리게</option>
+      </select>
+    </div>
+    <label class="row"><span>AI 라벨 영상의 채널 자동 차단</span><input type="checkbox" id="autoBlockLabeled" /></label>
+    <label class="row"><span>카드에 🚫 차단 버튼 표시</span><input type="checkbox" id="showBlockButton" /></label>
+  </section>
+
+  <section>
+    <h2>쇼츠</h2>
+    <label class="row"><span>AI 쇼츠 자동으로 넘기기</span><input type="checkbox" id="shortsAutoSkip" /></label>
+    <label class="row"><span>피드에서 쇼츠 전부 숨기기</span><input type="checkbox" id="hideAllShorts" /></label>
+  </section>
+
+  <section>
+    <h2>차단 채널 <small id="blockedCount"></small></h2>
+    <ul id="blocked" class="list"></ul>
+  </section>
+
+  <section>
+    <h2>허용 채널</h2>
+    <ul id="allowed" class="list"></ul>
+  </section>
+
+  <section>
+    <h2>제목 키워드 <small>(한 줄에 하나)</small></h2>
+    <textarea id="keywords" rows="6"></textarea>
+    <button id="saveKeywords">키워드 저장</button>
+  </section>
+
+  <footer>
+    <button id="export">목록 내보내기</button>
+    <button id="import">가져오기</button>
+    <input type="file" id="importFile" accept="application/json" hidden />
+  </footer>
+
+  <script src="../src/defaults.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
