@@ -1,5 +1,7 @@
 const $ = (id) => document.getElementById(id);
 
+const itemCount = (v) => (Array.isArray(v) ? v.length : Object.keys(v || {}).length);
+
 async function getCfg() {
   return { ...YTAF_DEFAULTS, ...(await chrome.storage.local.get(YTAF_DEFAULTS)) };
 }
@@ -36,7 +38,11 @@ async function render() {
   $("hideAllShorts").checked = cfg.hideAllShorts;
   $("keywords").value = cfg.keywords.join("\n");
   $("channelPatterns").value = cfg.channelPatterns.join("\n");
-  $("blockedCount").textContent = `(${Object.keys(cfg.blockedChannels).length})`;
+  const blockedTotal = Object.keys(cfg.blockedChannels).length;
+  $("blockedCount").textContent = `(${blockedTotal})`;
+  for (const btn of document.querySelectorAll("[data-clear]")) {
+    btn.hidden = !itemCount(cfg[btn.dataset.clear]);
+  }
 
   renderList($("blocked"), cfg.blockedChannels, async (key) => {
     const c = await getCfg();
@@ -57,6 +63,15 @@ for (const id of ["enabled", "autoBlockLabeled", "autoBlockTts", "showBlockButto
   $(id).addEventListener("change", (e) => chrome.storage.local.set({ [id]: e.target.checked }));
 }
 $("close").addEventListener("click", () => window.close());
+for (const btn of document.querySelectorAll("[data-clear]")) {
+  btn.addEventListener("click", async () => {
+    const field = btn.dataset.clear;
+    const label = btn.parentElement.firstChild.textContent.trim();
+    const n = itemCount((await getCfg())[field]);
+    if (!n || !confirm(`${label} ${n}개를 모두 삭제할까요? 되돌릴 수 없습니다.`)) return;
+    await chrome.storage.local.set({ [field]: Array.isArray(YTAF_DEFAULTS[field]) ? [] : {} });
+  });
+}
 $("mode").addEventListener("change", (e) => chrome.storage.local.set({ mode: e.target.value }));
 
 function bindLineListSave(field, buttonId) {

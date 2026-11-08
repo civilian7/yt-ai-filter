@@ -21,10 +21,14 @@ body {
 .actions { display: flex; align-items: center; gap: 8px; }
 .close { margin: 0; padding: 0 4px; border: none; background: none; color: var(--muted); font-size: 16px; line-height: 1; }
 .close:hover { color: var(--accent); }
-header { display: flex; justify-content: space-between; align-items: center; }
+header { display: flex; justify-content: space-between; align-items: center; min-height: 40px; padding-bottom: 4px; }
 h1 { font-size: 16px; margin: 0; }
 h2 { font-size: 13px; margin: 0 0 6px; }
 h2 small { color: var(--muted); font-weight: 400; }
+h2.head { display: flex; align-items: center; gap: 4px; }
+.link { margin: 0 0 0 auto; padding: 0 4px; border: none; background: none; color: var(--muted); font-size: 12px; font-weight: 400; }
+.link:hover { color: var(--accent); }
+.link[hidden] { display: none; }
 section { border-top: 1px solid var(--line); padding: 10px 0; }
 .stat { color: var(--muted); }
 .stat b { color: var(--accent); font-size: 15px; }

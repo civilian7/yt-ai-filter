@@ -37,23 +37,23 @@
   </section>
 
   <section>
-    <h2>차단 채널 <small id="blockedCount"></small></h2>
+    <h2 class="head">차단 채널 <small id="blockedCount"></small><button class="link" data-clear="blockedChannels">모두 삭제</button></h2>
     <ul id="blocked" class="list"></ul>
   </section>
 
   <section>
-    <h2>허용 채널</h2>
+    <h2 class="head">허용 채널<button class="link" data-clear="allowedChannels">모두 삭제</button></h2>
     <ul id="allowed" class="list"></ul>
   </section>
 
   <section>
-    <h2>채널 이름 패턴 <small>(한 줄에 하나)</small></h2>
+    <h2 class="head">채널 이름 패턴 <small>(한 줄에 하나)</small><button class="link" data-clear="channelPatterns">모두 삭제</button></h2>
     <textarea id="channelPatterns" rows="3" placeholder="*AI*&#10;뉴스?"></textarea>
     <button id="saveChannelPatterns">패턴 저장</button>
   </section>
 
   <section>
-    <h2>제목 키워드 <small>(한 줄에 하나)</small></h2>
+    <h2 class="head">제목 키워드 <small>(한 줄에 하나)</small><button class="link" data-clear="keywords">모두 삭제</button></h2>
     <textarea id="keywords" rows="6"></textarea>
     <button id="saveKeywords">키워드 저장</button>
   </section>
