@@ -4,6 +4,7 @@
 
   let cfg = structuredClone(YTAF_DEFAULTS);
   let keywordRe = null;
+  let channelRe = null;
 
   // 영상 카드로 취급할 요소들 (데스크톱 + 모바일, 신/구 레이아웃)
   const CARD_SELECTOR = [
@@ -29,10 +30,27 @@
     keywordRe = list.length ? new RegExp(list.map(escapeRe).join("|"), "i") : null;
   }
 
+  // 와일드카드 패턴 → 정규식. *, ? 가 있으면 전체 일치, 없으면 포함 검사
+  function globToRe(p) {
+    const body = p.split(/([*?])/).map((t) => (t === "*" ? ".*" : t === "?" ? "." : escapeRe(t))).join("");
+    return /[*?]/.test(p) ? `^${body}$` : body;
+  }
+
+  function buildChannelRe() {
+    const list = (cfg.channelPatterns || []).map((k) => k.trim()).filter(Boolean);
+    channelRe = list.length ? new RegExp(list.map(globToRe).join("|"), "i") : null;
+  }
+
+  function matchChannel(ch) {
+    if (!channelRe) return false;
+    return [ch.name, ch.key].some((s) => s && channelRe.test(s.trim()));
+  }
+
   async function loadConfig() {
     const stored = await chrome.storage.local.get(YTAF_DEFAULTS);
     cfg = { ...YTAF_DEFAULTS, ...stored };
     buildKeywordRe();
+    buildChannelRe();
   }
 
   chrome.storage.onChanged.addListener(async (changes) => {
@@ -73,6 +91,7 @@
     const ch = getChannel(card);
     if (ch.key && cfg.allowedChannels[ch.key]) return null;
     if (ch.key && cfg.blockedChannels[ch.key]) return "차단 채널";
+    if (matchChannel(ch)) return "채널 패턴";
 
     const text = card.innerText || "";
     if (YTAF_LABEL_PATTERNS.some((re) => re.test(text))) return "AI 라벨";
@@ -250,6 +269,7 @@
     const overlay = reel.innerText || "";
     let reason = null;
     if (cfg.blockedChannels[ch.key]) reason = "차단 채널";
+    else if (matchChannel(ch)) reason = "채널 패턴";
     else if (YTAF_LABEL_PATTERNS.some((re) => re.test(overlay))) {
       reason = "AI 라벨";
       if (cfg.autoBlockLabeled) blockChannel(ch.key, ch.name);

@@ -9,6 +9,7 @@ const YTAF_DEFAULTS = {
   hideAllShorts: false,    // 피드의 쇼츠 선반/카드 자체를 전부 숨김
   blockedChannels: {},     // { "@handle" 또는 "UCxxxx": "표시 이름" }
   allowedChannels: {},     // 화이트리스트 (키워드 매칭에서 제외)
+  channelPatterns: [],     // 채널 이름/핸들 패턴 (* = 아무 글자, ? = 한 글자, 와일드카드 없으면 포함 검사)
   keywords: [
     "AI 생성", "AI로 만든", "AI가 만든", "AI 영상", "AI 노래", "AI 커버",
     "ai generated", "ai-generated", "made with ai", "ai cover", "ai song",

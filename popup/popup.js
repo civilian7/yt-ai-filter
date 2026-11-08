@@ -35,6 +35,7 @@ async function render() {
   $("shortsAutoSkip").checked = cfg.shortsAutoSkip;
   $("hideAllShorts").checked = cfg.hideAllShorts;
   $("keywords").value = cfg.keywords.join("\n");
+  $("channelPatterns").value = cfg.channelPatterns.join("\n");
   $("blockedCount").textContent = `(${Object.keys(cfg.blockedChannels).length})`;
 
   renderList($("blocked"), cfg.blockedChannels, async (key) => {
@@ -55,18 +56,25 @@ async function render() {
 for (const id of ["enabled", "autoBlockLabeled", "autoBlockTts", "showBlockButton", "shortsAutoSkip", "hideAllShorts"]) {
   $(id).addEventListener("change", (e) => chrome.storage.local.set({ [id]: e.target.checked }));
 }
+$("close").addEventListener("click", () => window.close());
 $("mode").addEventListener("change", (e) => chrome.storage.local.set({ mode: e.target.value }));
 
-$("saveKeywords").addEventListener("click", async () => {
-  const keywords = $("keywords").value.split("\n").map((s) => s.trim()).filter(Boolean);
-  await chrome.storage.local.set({ keywords });
-  $("saveKeywords").textContent = "저장됨 ✓";
-  setTimeout(() => ($("saveKeywords").textContent = "키워드 저장"), 1200);
-});
+function bindLineListSave(field, buttonId) {
+  const btn = $(buttonId);
+  const label = btn.textContent;
+  btn.addEventListener("click", async () => {
+    const lines = $(field).value.split("\n").map((s) => s.trim()).filter(Boolean);
+    await chrome.storage.local.set({ [field]: [...new Set(lines)] });
+    btn.textContent = "저장됨 ✓";
+    setTimeout(() => (btn.textContent = label), 1200);
+  });
+}
+bindLineListSave("keywords", "saveKeywords");
+bindLineListSave("channelPatterns", "saveChannelPatterns");
 
 $("export").addEventListener("click", async () => {
-  const { blockedChannels, allowedChannels, keywords } = await getCfg();
-  const blob = new Blob([JSON.stringify({ blockedChannels, allowedChannels, keywords }, null, 2)], {
+  const { blockedChannels, allowedChannels, keywords, channelPatterns } = await getCfg();
+  const blob = new Blob([JSON.stringify({ blockedChannels, allowedChannels, keywords, channelPatterns }, null, 2)], {
     type: "application/json"
   });
   const a = document.createElement("a");
@@ -85,7 +93,8 @@ $("importFile").addEventListener("change", async (e) => {
     await chrome.storage.local.set({
       blockedChannels: { ...cfg.blockedChannels, ...(data.blockedChannels || {}) },
       allowedChannels: { ...cfg.allowedChannels, ...(data.allowedChannels || {}) },
-      keywords: [...new Set([...cfg.keywords, ...(data.keywords || [])])]
+      keywords: [...new Set([...cfg.keywords, ...(data.keywords || [])])],
+      channelPatterns: [...new Set([...cfg.channelPatterns, ...(data.channelPatterns || [])])]
     });
   } catch {
     alert("JSON 파일을 읽지 못했습니다.");

@@ -5,12 +5,17 @@
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
-  <header>
-    <h1>YT AI Filter</h1>
-    <label class="switch"><input type="checkbox" id="enabled" /><span></span></label>
-  </header>
+  <div class="top">
+    <header>
+      <h1>YT AI Filter</h1>
+      <div class="actions">
+        <label class="switch"><input type="checkbox" id="enabled" /><span></span></label>
+        <button id="close" class="close" title="닫기">✕</button>
+      </div>
+    </header>
 
-  <section class="stat">걸러낸 영상 <b id="count">0</b>개</section>
+    <section class="stat">걸러낸 영상 <b id="count">0</b>개</section>
+  </div>
 
   <section>
     <div class="row">
@@ -39,6 +44,12 @@
   <section>
     <h2>허용 채널</h2>
     <ul id="allowed" class="list"></ul>
+  </section>
+
+  <section>
+    <h2>채널 이름 패턴 <small>(한 줄에 하나)</small></h2>
+    <textarea id="channelPatterns" rows="3" placeholder="*AI*&#10;뉴스?"></textarea>
+    <button id="saveChannelPatterns">패턴 저장</button>
   </section>
 
   <section>
